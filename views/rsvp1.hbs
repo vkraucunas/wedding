@@ -1,0 +1,28 @@
+<section id="wrapper">
+    <header>
+        <div class="inner">
+            <h2>RSVP</h2>
+            <p>"It's about that time.'"</p>
+        </div>
+    </header>
+
+    <!-- Content -->
+    <div class="wrapper">
+        <div class="inner">
+            <p>Please enter your street number below.</p>
+            <form action="/rsvp" method="POST">
+                <input
+                    id="pin"
+                    name="pin"
+                    type="number"
+                    >
+                    {{#if error}}
+                        <div class="error">
+                            <h4>{{ error }}</h4>
+                        </div>
+                    {{/if}}
+                <button>Submit</button>
+            </form>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,27 @@
+<section id="wrapper">
+    <header>
+        <div class="inner">
+            <h2>RSVP</h2>
+            <p>"It's about that time.'"</p>
+        </div>
+    </header>
+
+    <!-- Content -->
+    <div class="wrapper">
+        <div class="inner">
+            <p>Will you be joining us?</p>
+            <form action="/rsvp-3" method="POST">
+                <div class="6u$ 12u$(small)">
+                    <input type="radio" name="coming" value="true" id="true" checked>
+                    <label for="true">We'll be there!</label>
+                </div>
+                <div class="6u$ 12u$(small)">
+                    <input type="radio" name="coming"  value="false" id="false">
+                    <label for="false">We'll be celebrating from a galaxy far, far away.</label>
+                </div>
+                <input type="number" value={{id}} name="id" class="hidden"/>
+                <button>Submit</button>
+            </form>
+        </div>
+    </div>
+</section>

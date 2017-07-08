@@ -1,0 +1,24 @@
+<section id="wrapper">
+    <header>
+        <div class="inner">
+            <h2>RSVP</h2>
+            <p>"It's about that time.'"</p>
+        </div>
+    </header>
+
+    <!-- Content -->
+        <div class="wrapper">
+            <div class="inner">
+                <p>Select your name. Don't worry, you'll be able to respond for all guest(s) on your invitation later.</p>
+                <ul>
+                    {{#each data}}
+                        <li><a href="/rsvp-3/{{../permalink}}{{id}}">{{fname}} {{lname}}</a></li>
+                    {{/each}}
+                </ul>
+                <br>
+                <br>
+                <p><strong>Uh oh!</strong> My (or my partner's name) is not here! Please call/text the phone number on your RSVP card.</p>
+            </div>
+        </div>
+
+</section>
