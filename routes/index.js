@@ -19,14 +19,13 @@ router.get('/rsvp', (req, res, next) => {
 })
 
 router.get('/rsvp-no', (req, res, next) => {
-  res.render('rsvp_no')
+  res.render('rsvp_no', {title: "RSVP Complete"})
 })
 
 router.get('/rsvp-2/:pin', (req, res, next) => {
   const pin = parseInt(req.params.pin)
   queries.findGuestsByPin(pin)
     .then(data => {
-      console.log(data)
       res.render('rsvp2', {
         title: 'RSVP',
         data: data
@@ -40,6 +39,17 @@ router.get('/rsvp-3/:inviteID', (req, res, next) => {
     res.render('rsvp3', {
       title: 'RSVP',
       id: inviteID
+    })
+})
+
+router.get('/rsvp-4/:inviteID', (req, res, next) => {
+  const inviteID = parseInt(req.params.inviteID)
+  queries.findGuestsByInviteId(inviteID)
+    .then(data => {
+      res.render('rsvp4', {
+        title: 'RSVP',
+        data: data
+      })
     })
 })
 
@@ -72,16 +82,18 @@ router.post('/rsvp', (req, res, next) => {
 })
 
 router.post('/rsvp-3', (req, res, next) => {
-  const coming = req.body.coming == 'true'
   const invitationId = parseInt(req.body.id)
-  if (!coming) {
-    queries.notAttending(invitationId)
-      .then(() => {
-        res.redirect('/rsvp-no')
-      })
-      .catch(err => next(err))
-  }
+  if(req.body.coming == 'true') {return res.redirect(`/rsvp-4/${invitationId}`)}
 
+  queries.findGuestsByInviteId(invitationId)
+    .then((data) => {
+      let guestsWhoAreNotAttending = data.map(x=>x.id);
+      queries.notAttending(guestsWhoAreNotAttending)
+        .then(() => {
+          res.redirect('/rsvp-no')
+        }).catch(err => next(err))
+    })
+    .catch(err => next(err))
 })
 
 module.exports = router;
