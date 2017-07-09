@@ -1,0 +1,36 @@
+<section id="wrapper">
+    <header>
+        <div class="inner">
+            <h2>Report</h2>
+            <p>"Don't be a fucking pussy, use the cmd line"</p>
+        </div>
+    </header>
+
+    <!-- Content -->
+    <div class="wrapper">
+        <div class="inner">
+            <h2 class="major">How We Doing?</h2>
+            <h3 class="major">Guests coming: {{data.guestsComingCount}}</h3>
+            <h3 class="major">RSVPs received: {{data.rsvpCount}}</h3>
+            <h3 class="major">Registered guest count: {{data.guestCount}}</h3>
+            <h3 class="major">Response Rate: {{data.responseRate}}%</h3>
+            <div class="row uniform">
+              <div class="6u 12u$(small)">
+                <h3>Guests Not RSVPd</h3>
+                <ul>
+                  {{#each data.guestsNotResponded}}
+                  <li>{{fname}} {{lname}}</li>
+                  {{/each}}
+                </ul>
+              </div>
+              <div class="6u 12u$(small)">
+                <h3>Dietary Needs</h3>
+                <ul>
+                  {{#each data.dietaryRestrictions}}
+                  <li>{{fname}} {{lname}}, {{dietary}}</li>
+                  {{/each}}
+                </ul>
+              </div>
+        </div>
+    </div>
+</section>

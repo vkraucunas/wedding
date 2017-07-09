@@ -67,7 +67,6 @@ router.get('/update-address/:invite_id', (req, res, next) => {
 
   queries.getAddressByInviteId(invite_id)
     .then((data) => {
-      console.log(data)
       let stateSelectionList = helpers.states.map(x=>{
         x.selected = data[0].state == x.abbr
         return x;
@@ -75,10 +74,43 @@ router.get('/update-address/:invite_id', (req, res, next) => {
       res.render('update_address', {
         title: "Update Address",
         data: data[0],
-        states: stateSelectionList
+        states: stateSelectionList,
+        invite_id: invite_id
       })
     })
     .catch(err => next(err))
+})
+
+router.get('/report', (req, res, next) => {
+  let totalGuestCount = queries.guestCount
+  let totalRSVPCount = queries.rsvpCount
+  let totalGuestsComing = queries.guestsComingCount
+  let guestsNotRSVPdYet = queries.guestsNotRSVPdYet
+  let dietaryRestrictions = queries.dietaryRestrictions
+
+  Promise.all([
+    totalGuestCount(),
+    totalRSVPCount(),
+    totalGuestsComing(),
+    guestsNotRSVPdYet(),
+    dietaryRestrictions()
+  ]).then(data => {
+    let result = {
+      guestCount: parseInt(data[0][0].count),
+      rsvpCount: parseInt(data[1][0].count),
+      guestsComingCount: parseInt(data[2][0].count),
+      guestsNotResponded: data[3],
+      dietaryRestrictions: data[4],
+    }
+    result.responseRate = parseInt((result.rsvpCount / result.guestCount) * 100)
+    console.log(result)
+      res.render('report', {
+        title: "Report",
+        data: result
+      })
+    }).catch(next)
+
+
 })
 
 router.post('/rsvp', (req, res, next) => {
@@ -146,7 +178,7 @@ router.post('/rsvp-4', (req, res, next) => {
       fname: body[`fname-${id}`],
       lname: body[`lname-${id}`],
       coming: body[`coming-${id}`] == 'on',
-      dietary: body[`dietary-${id}`]
+      dietary: body[`dietary-${id}`] || null
     };
     if (id && id !== '') {
       tmpRsvp.id = id;
@@ -184,6 +216,14 @@ router.post('/rsvp-4', (req, res, next) => {
   }).catch(err => next(err))
 
 
+})
+
+router.post('/update-address', (req, res, next) => {
+  console.log('====================================');
+  console.log("BODY", req.body);
+  console.log('====================================');
+  queries.updateAddress(req.body)
+    .then(() => res.redirect('/rsvp-yes'))
 })
 
 module.exports = router;
