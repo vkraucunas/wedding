@@ -2047,6 +2047,7 @@
 			padding-left: 2.4em;
 			padding-right: 0.75em;
 			position: relative;
+			margin: 1em 0;
 		}
 
 			input[type="checkbox"] + label:before,

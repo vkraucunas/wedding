@@ -1,0 +1,59 @@
+<section id="wrapper">
+    <header>
+        <div class="inner">
+            <h2>RSVP</h2>
+            <p>"It's about that time.'"</p>
+        </div>
+    </header>
+
+    <!-- Content -->
+    <div class="wrapper">
+        <div class="inner">
+            <h2 class="major">Let's get up to date.</h2>
+            <form action="/update-address" method="POST">
+              <div class="row uniform">
+                <div class="12u 12u$(small)">
+                  <label for=`street`>Street</label>
+                  <input type="text"
+                        name="street"
+                        id=`street`
+                        value="{{data.street}}"
+                        >
+                  </div>
+              </div>
+                <div class="row uniform">
+                  <div class="6u 12u$(small)">
+                    <label for=`city`>City</label>
+                    <input type="text"
+                          name="city"
+                          id=`city`
+                          value="{{data.city}}"
+                          >
+                  </div>
+                  <div class="3u 12u$(small)">
+                    <label for=`state`>State</label>
+                    <select name="state" id="state" value={{data.state}}>
+                      {{#each states}}
+                        <option
+                         {{#if selected }}
+                            selected
+                         {{/if}}
+                         value={{abbr}}>{{name}}</option>
+                      {{/each}}
+                    </select>
+                  </div>
+                  <div class="3u 12u$(small)">
+                    <label for=`zip`>Zip</label>
+                    <input type="number"
+                          name="zip"
+                          id=`zip`
+                          value={{data.zip}}
+                          >
+                  </div>
+                </div>
+
+              <button>Submit</button>
+            </form>
+        </div>
+    </div>
+</section>
