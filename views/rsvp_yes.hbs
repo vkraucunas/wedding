@@ -1,16 +1,27 @@
 <section id="wrapper">
     <header>
         <div class="inner">
-            <h2>RSVP</h2>
-            <p>"Yay!"</p>
+            <h2>RSVP Complete</h2>
+            <p>"We are over the moon that you're joining us!"</p>
         </div>
     </header>
 
     <!-- Content -->
     <div class="wrapper">
         <div class="inner">
-            <h2 class="major">We are over the moon that you're joining us!</h2>
             <p><em>Thank you for letting us know.</em></p>
+            <h3 class="major">Confirmation</h3>
+            <div class="row universal">
+            {{#each data}}
+                <div class="6u 12u$(small)">
+                    <p class="less-margin"><strong>{{fname}} {{lname}}</strong></p>
+                    <p class="less-margin">{{street}}, {{city}}, {{state}} {{zip}}</p>
+                    <p class="less-margin"><strong>Dietary restrictions:</strong> {{dietary}}</p>
+                    <p class="less-margin"><strong>Will be attending:</strong> {{coming}}</p>
+                    <hr>
+                </div>
+            {{/each}}
+            </div>
             <p>Feel free to add music suggestions to our <a href="https://open.spotify.com/user/flatlanderesque/playlist/4hPUOXDptpXrovntHF98zD" target="_blank">reception playlist!</a></p>
             <a href="/"><h4>Return home</h4></a>
         </div>
