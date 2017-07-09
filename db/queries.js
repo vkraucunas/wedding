@@ -17,7 +17,14 @@ module.exports = {
   updateAttendingGuest: (guestObj) => Guests().where('id', guestObj.id).update(guestObj),
   insertNewGuest: (guestObj) => Guests().insert(guestObj).returning('id'),
   insertNewIGRecord: (guest_id, invite_id) => IG().insert({guest_id: guest_id, invite_id: invite_id}).returning('invite_id'),
-  getAddressByInviteId: (id) => Invitations().select('street', 'city', 'state','zip').where('id', id)
+  getAddressByInviteId: (id) => Invitations().select('street', 'city', 'state','zip').where('id', id),
+  updateAddress: (inviteObj) => Invitations().update(inviteObj).where('id', inviteObj.id),
+  guestCount: () => Guests().count(),
+  rsvpCount: () => Guests().count().where('has_rsvpd', true),
+  guestsComingCount: () => Guests().count().where('has_rsvpd', true).andWhere('coming', true),
+  dietaryRestrictions: () => Guests().whereNotNull('dietary').orWhere('dietary', '!=', ''),
+  guestsNotRSVPdYet: () => Guests().where('has_rsvpd', false)
+
 
 }
 

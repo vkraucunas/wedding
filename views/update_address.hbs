@@ -17,6 +17,7 @@
                   <input type="text"
                         name="street"
                         id=`street`
+                        required
                         value="{{data.street}}"
                         >
                   </div>
@@ -27,12 +28,13 @@
                     <input type="text"
                           name="city"
                           id=`city`
+                          required
                           value="{{data.city}}"
                           >
                   </div>
                   <div class="3u 12u$(small)">
                     <label for=`state`>State</label>
-                    <select name="state" id="state" value={{data.state}}>
+                    <select name="state" id="state" value={{data.state}} required>
                       {{#each states}}
                         <option
                          {{#if selected }}
@@ -47,10 +49,16 @@
                     <input type="number"
                           name="zip"
                           id=`zip`
+                          required
                           value={{data.zip}}
                           >
                   </div>
                 </div>
+                <input type="number"
+                     name="id"
+                     value={{invite_id}}
+                     class="hidden"
+                     />
 
               <button>Submit</button>
             </form>
