@@ -23,8 +23,15 @@ router.get('/rsvp-no', (req, res, next) => {
   res.render('rsvp_no', {title: "RSVP Complete"})
 })
 
-router.get('/rsvp-yes', (req, res, next) => {
-  res.render('rsvp_yes', {title: "RSVP Complete"})
+router.get('/rsvp-yes/:invite_id', (req, res, next) => {
+  const invite_id = req.params.invite_id
+  queries.findGuestsByInviteId(invite_id)
+    .then((data) => {
+      res.render('rsvp_yes', {
+        title: "RSVP Complete",
+        data: data
+      })
+    })
 })
 
 router.get('/rsvp-2/:pin', (req, res, next) => {

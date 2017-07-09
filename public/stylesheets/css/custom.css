@@ -10,3 +10,7 @@ input {
 .hidden {
   display: none !important;
 }
+
+.less-margin {
+  margin-bottom: .2em;
+}
