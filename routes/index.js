@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var queries = require('../db/queries')
+var helpers = require('./helpers')
 
 router.get('/', (req, res, next) => {
   res.render('index', {title: "Home"})
@@ -46,9 +47,13 @@ router.get('/rsvp-4/:inviteID', (req, res, next) => {
   const inviteID = parseInt(req.params.inviteID)
   queries.findGuestsByInviteId(inviteID)
     .then(data => {
+      if (data.length !== data[0].guest_limit) {
+        data = helpers.matchGuestLimit(data)
+      }
       res.render('rsvp4', {
         title: 'RSVP',
-        data: data
+        data: data,
+        invite_id: inviteID
       })
     })
 })
@@ -94,6 +99,54 @@ router.post('/rsvp-3', (req, res, next) => {
         }).catch(err => next(err))
     })
     .catch(err => next(err))
+})
+
+router.post('/rsvp-4', (req, res, next) => {
+  const body = req.body;
+  const blank = {
+    "has_rsvpd": true
+  }
+  let ids = new Map();
+
+  Object.keys(body).forEach(key => {
+    if (key == 'invite_id') {return}
+    let id = String(key).split('-')[1];
+    ids.set(id);
+  });
+
+  Promise.all(Array.from(ids.keys()).map(id => {
+    const tmpRsvp = {
+      fname: body[`fname-${id}`],
+      lname: body[`lname-${id}`],
+      coming: body[`coming-${id}`] == 'on',
+      dietary: body[`dietary-${id}`],
+      id: id || null
+    };
+    const invite_id = body.invite_id
+    let rsvp = Object.assign(blank, tmpRsvp);
+    //Not exercising pluse one
+    if (rsvp.id == null && !rsvp.coming) { return; }
+
+    //Updating guest
+    if(rsvp.id) {
+      return queries.updateAttendingGuest(rsvp)
+    } else { //add guest
+      return new Promise((resolve, reject) => {
+        delete rsvp.id
+        queries.insertNewGuest(rsvp)
+          .then((id) => {
+            queries.insertNewIGRecord(parseInt(id), parseInt(invite_id))
+            .then(resolve)
+            .catch(reject)
+          })
+          .catch(reject);
+      });
+    }
+  })).then(results => {
+    console.log("something happened", results)
+  }).catch(err => next(err))
+
+
 })
 
 module.exports = router;

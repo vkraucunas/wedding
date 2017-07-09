@@ -11,16 +11,18 @@
         <div class="inner">
             <p>Please enter your street number below.</p>
             <form action="/rsvp" method="POST">
-                <input
-                    id="pin"
-                    name="pin"
-                    type="number"
-                    >
+                <div class="4u$ 12u$(small)">
+                    <input
+                        id="pin"
+                        name="pin"
+                        type="number"
+                        >
                     {{#if error}}
                         <div class="error">
                             <h4>{{ error }}</h4>
                         </div>
                     {{/if}}
+                </div>
                 <button>Submit</button>
             </form>
         </div>

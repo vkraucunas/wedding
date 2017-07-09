@@ -1,0 +1,56 @@
+<section id="wrapper">
+    <header>
+        <div class="inner">
+            <h2>RSVP</h2>
+            <p>"It's about that time.'"</p>
+        </div>
+    </header>
+
+    <!-- Content -->
+    <div class="wrapper">
+        <div class="inner">
+            <h2 class="major">Tell us more.</h2>
+            <form action="/rsvp-4" method="POST">
+              {{#each data}}
+                <div class="row uniform">
+                  <div class=`6u 12u$(small)`>
+                    <label for=`fname-{{guest_id}}`>First Name</label>
+                    <input type="text"
+                          name="fname-{{guest_id}}"
+                          id=`fname-{{guest_id}}`
+                          value={{fname}}
+                          >
+                  </div>
+                  <div class="6u 12u$(small)">
+                    <label for=`lname-{{guest_id}}`>Last Name</label>
+                    <input type="text"
+                          name="lname-{{guest_id}}"
+                          id=`lname-{{guest_id}}`
+                          value={{lname}}
+                          >
+                  </div>
+                </div>
+                <div class="6u 12u$(small)">
+                  <input type="checkbox"
+                        checked
+                        name="coming-{{guest_id}}"
+                        id=`coming-{{guest_id}}`
+                        >
+                  <label for=`coming-{{guest_id}}`>Will be attending</label>
+                </div>
+                <div class="8u$ 12u$(small)">
+                  <label for="dietary">Dietary Restrictions</label>
+                  <textarea name="dietary-{{guest_id}}"></textarea>
+                </div>
+                <hr>
+              {{/each}}
+              <input type="number"
+                     name="invite_id"
+                     value={{invite_id}}
+                     class="hidden"
+                     />
+              <button>Submit</button>
+            </form>
+        </div>
+    </div>
+</section>
