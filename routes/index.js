@@ -87,13 +87,15 @@ router.get('/report', (req, res, next) => {
   let totalGuestsComing = queries.guestsComingCount
   let guestsNotRSVPdYet = queries.guestsNotRSVPdYet
   let dietaryRestrictions = queries.dietaryRestrictions
+  let updatedAddresses = queries.updatedAddresses
 
   Promise.all([
     totalGuestCount(),
     totalRSVPCount(),
     totalGuestsComing(),
     guestsNotRSVPdYet(),
-    dietaryRestrictions()
+    dietaryRestrictions(),
+    updatedAddresses()
   ]).then(data => {
     let result = {
       guestCount: parseInt(data[0][0].count),
@@ -101,13 +103,13 @@ router.get('/report', (req, res, next) => {
       guestsComingCount: parseInt(data[2][0].count),
       guestsNotResponded: data[3],
       dietaryRestrictions: data[4],
+      updatedAddresses: data[5]
     }
     result.responseRate = parseInt((result.rsvpCount / result.guestCount) * 100)
-    console.log(result)
-      res.render('report', {
-        title: "Report",
-        data: result
-      })
+    res.render('report', {
+      title: "Report",
+      data: result
+    })
     }).catch(next)
 
 
@@ -163,7 +165,7 @@ router.post('/rsvp-4', (req, res, next) => {
     "has_rsvpd": true
   }
   let ids = new Map();
-  const invite_id = body.invite_id
+  const invite_id = body.id
 
   Object.keys(body).forEach(key => {
     if (key == 'invite_id') {return}
@@ -210,7 +212,6 @@ router.post('/rsvp-4', (req, res, next) => {
       });
     }
   })).then(results => {
-    console.log("HELLO", results)
     if (!needToUpdateAddress) {return res.redirect('/rsvp-yes')}
     res.redirect(`/update-address/${invite_id}`)
   }).catch(err => next(err))
@@ -219,10 +220,9 @@ router.post('/rsvp-4', (req, res, next) => {
 })
 
 router.post('/update-address', (req, res, next) => {
-  console.log('====================================');
-  console.log("BODY", req.body);
-  console.log('====================================');
-  queries.updateAddress(req.body)
+  let body = req.body
+  body.updated_address = true
+  queries.updateAddress(body)
     .then(() => res.redirect('/rsvp-yes'))
 })
 

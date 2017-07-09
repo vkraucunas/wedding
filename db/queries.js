@@ -23,7 +23,9 @@ module.exports = {
   rsvpCount: () => Guests().count().where('has_rsvpd', true),
   guestsComingCount: () => Guests().count().where('has_rsvpd', true).andWhere('coming', true),
   dietaryRestrictions: () => Guests().whereNotNull('dietary').orWhere('dietary', '!=', ''),
-  guestsNotRSVPdYet: () => Guests().where('has_rsvpd', false)
+  guestsNotRSVPdYet: () => Guests().where('has_rsvpd', false),
+  updatedAddresses: () => Invitations().where('updated_address', true).join('invitations_guests as ig', 'invitations.id', 'ig.invite_id')
+            .join('guests', 'ig.guest_id', 'guests.id')
 
 
 }

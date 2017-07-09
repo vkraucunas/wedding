@@ -30,6 +30,13 @@
                   <li>{{fname}} {{lname}}, {{dietary}}</li>
                   {{/each}}
                 </ul>
+
+                <h3>Updated Addreses</h3>
+                <ul>
+                  {{#each data.updatedAddresses}}
+                  <li>{{fname}} {{lname}}, {{street}}, {{city}} {{state}} {{zip}}</li>
+                  {{/each}}
+                </ul>
               </div>
         </div>
     </div>
