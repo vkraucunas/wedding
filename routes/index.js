@@ -210,7 +210,6 @@ router.post('/rsvp-4', (req, res, next) => {
       return new Promise((resolve, reject) => {
         queries.insertNewGuest(rsvp)
           .then((id) => {
-            console.log("insertNewGuest complete.", id)
             queries.insertNewIGRecord(parseInt(id), parseInt(invite_id))
             .then(resolve)
             .catch(reject)
@@ -227,9 +226,6 @@ router.post('/rsvp-4', (req, res, next) => {
 })
 
 router.post('/update-address', (req, res, next) => {
-  console.log('====================================');
-  console.log(req.body);
-  console.log('====================================');
   const invite_id = req.body.id
   let body = req.body
   body.updated_address = true
