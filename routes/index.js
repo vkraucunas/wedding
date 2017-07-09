@@ -219,7 +219,7 @@ router.post('/rsvp-4', (req, res, next) => {
       });
     }
   })).then(results => {
-    if (!needToUpdateAddress) {return res.redirect('/rsvp-yes')}
+    if (!needToUpdateAddress) {return res.redirect(`/rsvp-yes/${invite_id}`)}
     res.redirect(`/update-address/${invite_id}`)
   }).catch(err => next(err))
 
@@ -227,10 +227,16 @@ router.post('/rsvp-4', (req, res, next) => {
 })
 
 router.post('/update-address', (req, res, next) => {
+  console.log('====================================');
+  console.log(req.body);
+  console.log('====================================');
+  const invite_id = req.body.id
   let body = req.body
   body.updated_address = true
+  body.zip = parseInt(body.zip)
+  body.id = parseInt(body.id)
   queries.updateAddress(body)
-    .then(() => res.redirect('/rsvp-yes'))
+    .then(() => res.redirect(`/rsvp-yes/${invite_id}`))
 })
 
 module.exports = router;
