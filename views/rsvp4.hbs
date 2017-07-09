@@ -10,6 +10,7 @@
     <div class="wrapper">
         <div class="inner">
             <h2 class="major">Tell us more.</h2>
+            <p>We have put together a menu that will serve most, but please let us know about dietary restictions / allergies so we can be sure you're feeling good for dancing!</p>
             <form action="/rsvp-4" method="POST">
               {{#each data}}
                 <div class="row uniform">
@@ -49,6 +50,13 @@
                      value={{invite_id}}
                      class="hidden"
                      />
+              <div class="6u 12u$(small)">
+                <input type="checkbox"
+                      name="updated_address"
+                      id=`updated_address`
+                      >
+                <label for=`updated_address`>I need to update my mailing address</label>
+              </div>
               <button>Submit</button>
             </form>
         </div>

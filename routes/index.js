@@ -23,6 +23,10 @@ router.get('/rsvp-no', (req, res, next) => {
   res.render('rsvp_no', {title: "RSVP Complete"})
 })
 
+router.get('/rsvp-yes', (req, res, next) => {
+  res.render('rsvp_yes', {title: "RSVP Complete"})
+})
+
 router.get('/rsvp-2/:pin', (req, res, next) => {
   const pin = parseInt(req.params.pin)
   queries.findGuestsByPin(pin)
@@ -35,17 +39,17 @@ router.get('/rsvp-2/:pin', (req, res, next) => {
     .catch(err => next(err))
 })
 
-router.get('/rsvp-3/:inviteID', (req, res, next) => {
-  const inviteID = parseInt(req.params.inviteID)
+router.get('/rsvp-3/:invite_id', (req, res, next) => {
+  const invite_id = parseInt(req.params.invite_id)
     res.render('rsvp3', {
       title: 'RSVP',
-      id: inviteID
+      id: invite_id
     })
 })
 
-router.get('/rsvp-4/:inviteID', (req, res, next) => {
-  const inviteID = parseInt(req.params.inviteID)
-  queries.findGuestsByInviteId(inviteID)
+router.get('/rsvp-4/:invite_id', (req, res, next) => {
+  const invite_id = parseInt(req.params.invite_id)
+  queries.findGuestsByInviteId(invite_id)
     .then(data => {
       if (data.length !== data[0].guest_limit) {
         data = helpers.matchGuestLimit(data)
@@ -53,9 +57,28 @@ router.get('/rsvp-4/:inviteID', (req, res, next) => {
       res.render('rsvp4', {
         title: 'RSVP',
         data: data,
-        invite_id: inviteID
+        invite_id: invite_id
       })
     })
+})
+
+router.get('/update-address/:invite_id', (req, res, next) => {
+  const invite_id = req.params.invite_id
+
+  queries.getAddressByInviteId(invite_id)
+    .then((data) => {
+      console.log(data)
+      let stateSelectionList = helpers.states.map(x=>{
+        x.selected = data[0].state == x.abbr
+        return x;
+      })
+      res.render('update_address', {
+        title: "Update Address",
+        data: data[0],
+        states: stateSelectionList
+      })
+    })
+    .catch(err => next(err))
 })
 
 router.post('/rsvp', (req, res, next) => {
@@ -87,10 +110,10 @@ router.post('/rsvp', (req, res, next) => {
 })
 
 router.post('/rsvp-3', (req, res, next) => {
-  const invitationId = parseInt(req.body.id)
-  if(req.body.coming == 'true') {return res.redirect(`/rsvp-4/${invitationId}`)}
+  const invite_id = parseInt(req.body.id)
+  if(req.body.coming == 'true') {return res.redirect(`/rsvp-4/${invite_id}`)}
 
-  queries.findGuestsByInviteId(invitationId)
+  queries.findGuestsByInviteId(invite_id)
     .then((data) => {
       let guestsWhoAreNotAttending = data.map(x=>x.id);
       queries.notAttending(guestsWhoAreNotAttending)
@@ -103,47 +126,61 @@ router.post('/rsvp-3', (req, res, next) => {
 
 router.post('/rsvp-4', (req, res, next) => {
   const body = req.body;
+  const needToUpdateAddress = body.updated_address == 'on'
   const blank = {
     "has_rsvpd": true
   }
   let ids = new Map();
+  const invite_id = body.invite_id
 
   Object.keys(body).forEach(key => {
     if (key == 'invite_id') {return}
     let id = String(key).split('-')[1];
-    ids.set(id);
-  });
+    if(id || id === '') {
+      ids.set(id);
+    }
 
+  });
   Promise.all(Array.from(ids.keys()).map(id => {
-    const tmpRsvp = {
+    let tmpRsvp = {
       fname: body[`fname-${id}`],
       lname: body[`lname-${id}`],
       coming: body[`coming-${id}`] == 'on',
-      dietary: body[`dietary-${id}`],
-      id: id || null
+      dietary: body[`dietary-${id}`]
     };
-    const invite_id = body.invite_id
-    let rsvp = Object.assign(blank, tmpRsvp);
+    if (id && id !== '') {
+      tmpRsvp.id = id;
+    }
+    let rsvp = Object.assign({},blank, tmpRsvp);
     //Not exercising pluse one
-    if (rsvp.id == null && !rsvp.coming) { return; }
+    if (!rsvp.id && !rsvp.coming) { return; }
 
     //Updating guest
-    if(rsvp.id) {
+    if(id && id !== '') {
+      rsvp.id = id
+      console.log('====================================');
+      console.log("UPDATING A GUEST", rsvp);
+      console.log('====================================');
       return queries.updateAttendingGuest(rsvp)
     } else { //add guest
+      console.log('====================================');
+      console.log("ADDING A GUEST", rsvp);
+      console.log('====================================');
       return new Promise((resolve, reject) => {
-        delete rsvp.id
         queries.insertNewGuest(rsvp)
           .then((id) => {
+            console.log("insertNewGuest complete.", id)
             queries.insertNewIGRecord(parseInt(id), parseInt(invite_id))
             .then(resolve)
             .catch(reject)
           })
-          .catch(reject);
+          .catch(err => {console.log(err); reject(err)});
       });
     }
   })).then(results => {
-    console.log("something happened", results)
+    console.log("HELLO", results)
+    if (!needToUpdateAddress) {return res.redirect('/rsvp-yes')}
+    res.redirect(`/update-address/${invite_id}`)
   }).catch(err => next(err))
 
 

@@ -16,7 +16,8 @@ module.exports = {
   notAttending: (ids) => Guests().whereIn('id', ids).update({'has_rsvpd': true}),
   updateAttendingGuest: (guestObj) => Guests().where('id', guestObj.id).update(guestObj),
   insertNewGuest: (guestObj) => Guests().insert(guestObj).returning('id'),
-  insertNewIGRecord: (guest_id, invite_id) => IG().insert({guest_id: guest_id, invite_id: invite_id})
+  insertNewIGRecord: (guest_id, invite_id) => IG().insert({guest_id: guest_id, invite_id: invite_id}).returning('invite_id'),
+  getAddressByInviteId: (id) => Invitations().select('street', 'city', 'state','zip').where('id', id)
 
 }
 
